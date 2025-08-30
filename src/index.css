@@ -1,0 +1,84 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+body {
+  font-family: sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #343a40;
+  color: #fff;
+  padding-top: 20px;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  transform: translateX(0);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+
+.sidebar-toggle-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.main-content {
+  margin-left: 250px;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out;
+}
+
+.main-content.expanded {
+  margin-left: 0;
+}
+
+.movie-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.movie-card {
+  width: 18rem;
+  transition: transform 0.2s;
+}
+
+.movie-card:hover {
+  transform: scale(1.05);
+}
+
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+}
+
+/* ... el resto de tu CSS ... */
+
+.text-stroke {
+  color: #000; /* Color del texto negro */
+  -webkit-text-stroke: 1.5px #00FFFF; /* 1.5px de grosor para la orilla, color celeste */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3); /* Una pequeña sombra para que resalte más */
+}

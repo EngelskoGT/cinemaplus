@@ -4,6 +4,7 @@ import MovieList from './components/MovieList';
 import MovieFilters from './components/MovieFilters';
 import AddMovieForm from './components/AddMovieForm';
 import MovieForm from './components/MovieForm';
+import MovieModal from './components/MovieModal'; // Importamos el nuevo componente
 
 const API_URL = 'https://movie.azurewebsites.net/api/cartelera';
 
@@ -15,6 +16,10 @@ function App() {
   const [currentView, setCurrentView] = useState('list');
   const [editingMovie, setEditingMovie] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
+  // Nuevos estados para el modal
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
 
   const [searchParams] = useSearchParams();
 
@@ -81,6 +86,7 @@ function App() {
       }
       fetchAllMovies();
     } catch (err) {
+      console.error('Error deleting movie:', err);
       setError(`Error al eliminar la película: ${err.message}`);
     }
   };
@@ -138,6 +144,17 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+  
+  // Nuevas funciones para el modal
+  const handleOpenModal = (movie) => {
+    setSelectedMovie(movie);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedMovie(null);
+    setShowModal(false);
+  };
 
   return (
     <>
@@ -168,8 +185,7 @@ function App() {
         )}
         {currentView === 'list' && (
           <>
-            {/* INICIO del código del Carrusel (Banner) - AHORA EN LA PARTE SUPERIOR */}
-            <div className="container-fluid p-0 mb-4"> {/* Usamos container-fluid y p-0 para que ocupe todo el ancho */}
+            <div className="container-fluid p-0 mb-4">
                 <div id="movieCarousel" className="carousel slide" data-bs-ride="carousel">
                     <div className="carousel-indicators">
                         <button type="button" data-bs-target="#movieCarousel" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
@@ -179,32 +195,16 @@ function App() {
                     </div>
                     <div className="carousel-inner">
                         <div className="carousel-item active">
-                            <img src="/img/banner/3209.webp" className="d-block w-100" alt="Banner de oferta 1" />
-                            <div className="carousel-caption d-none d-md-block">
-                                <h5>Grandes Promociones</h5>
-                                <p>Descubre ofertas exclusivas en tus películas favoritas.</p>
-                            </div>
+                            <img src="img/banner/3209.webp" className="d-block w-100" alt="Banner de oferta 1" />
                         </div>
                         <div className="carousel-item">
-                            <img src="/img/banner/3210.webp" className="d-block w-100" alt="Banner de oferta 2" />
-                            <div className="carousel-caption d-none d-md-block">
-                                <h5>Próximos Estrenos</h5>
-                                <p>No te pierdas lo último del cine.</p>
-                            </div>
+                            <img src="img/banner/3210.webp" className="d-block w-100" alt="Banner de oferta 2" />
                         </div>
                         <div className="carousel-item">
-                            <img src="/img/banner/3211.webp" className="d-block w-100" alt="Banner de oferta 3" />
-                            <div className="carousel-caption d-none d-md-block">
-                                <h5>Eventos Especiales</h5>
-                                <p>Vive experiencias únicas en nuestro cine.</p>
-                            </div>
+                            <img src="img/banner/3211.webp" className="d-block w-100" alt="Banner de oferta 3" />
                         </div>
                         <div className="carousel-item">
-                            <img src="/img/banner/3217.webp" className="d-block w-100" alt="Banner de oferta 4" />
-                            <div className="carousel-caption d-none d-md-block">
-                                <h5>Club de Socios</h5>
-                                <p>Beneficios exclusivos para nuestros miembros.</p>
-                            </div>
+                            <img src="img/banner/3217.webp" className="d-block w-100" alt="Banner de oferta 4" />
                         </div>
                     </div>
                     <button className="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
@@ -217,10 +217,8 @@ function App() {
                     </button>
                 </div>
             </div>
-         
-          <h1 className="display-4 text-center mb-5 text-dark fw-bold text-stroke">
-          Cartelera de Películas
-          </h1>
+
+            <h1 className="display-4 text-center mb-5 text-dark fw-bold text-stroke">Cartelera de Películas</h1>
             
             <MovieFilters />
             
@@ -239,7 +237,11 @@ function App() {
             )}
 
             {!loading && !error && (
-              <MovieList movies={filteredMovies} onDelete={handleDelete} onEdit={handleEdit} />
+              <MovieList movies={filteredMovies} onDelete={handleDelete} onEdit={handleEdit} onOpenModal={handleOpenModal} />
+            )}
+            
+            {showModal && (
+                <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
             )}
           </>
         )}

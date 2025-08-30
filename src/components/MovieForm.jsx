@@ -64,6 +64,10 @@ const MovieForm = ({ movieToEdit, onSave, onCancel }) => {
             <label className="form-label">URL del Póster</label>
             <input type="text" className="form-control" name="Poster" value={movie.Poster} onChange={handleChange} required />
           </div>
+          <div className="col-12">
+            <label className="form-label">Descripción</label>
+            <textarea className="form-control" name="description" rows="3" value={movie.description} onChange={handleChange} required></textarea>
+          </div>
         </div>
         <div className="mt-4 d-grid gap-2 d-md-flex justify-content-md-end">
           <button type="submit" className="btn btn-success">

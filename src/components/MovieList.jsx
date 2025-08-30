@@ -1,7 +1,7 @@
 import React from 'react';
 import MovieCard from './MovieCard';
 
-const MovieList = ({ movies, onEdit, onDelete }) => {
+const MovieList = ({ movies, onEdit, onDelete, onOpenModal }) => {
   if (movies.length === 0) {
     return (
       <div className="container text-center mt-5">
@@ -19,6 +19,7 @@ const MovieList = ({ movies, onEdit, onDelete }) => {
               movie={movie}
               onEdit={onEdit}
               onDelete={onDelete}
+              onOpenModal={onOpenModal}
             />
           </div>
         ))}

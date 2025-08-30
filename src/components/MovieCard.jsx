@@ -1,8 +1,8 @@
 import React from 'react';
 
-const MovieCard = ({ movie, onEdit, onDelete }) => {
+const MovieCard = ({ movie, onEdit, onDelete, onOpenModal }) => {
   return (
-    <div className="card movie-card shadow-sm">
+    <div className="card movie-card shadow-sm" onClick={() => onOpenModal(movie)}>
       <img src={movie.Poster} className="card-img-top" alt={movie.Title} />
       <div className="card-body">
         <h5 className="card-title text-truncate">{movie.Title}</h5>
@@ -11,10 +11,10 @@ const MovieCard = ({ movie, onEdit, onDelete }) => {
           <small className="text-muted">Ubicación: {movie.Ubication}</small>
         </p>
         <div className="d-grid gap-2">
-          <button className="btn btn-primary btn-sm" onClick={() => onEdit(movie)}>
+          <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); onEdit(movie); }}>
             Editar
           </button>
-          <button className="btn btn-danger btn-sm" onClick={() => onDelete(movie.imdbID)}>
+          <button className="btn btn-danger btn-sm" onClick={(e) => { e.stopPropagation(); onDelete(movie.imdbID); }}>
             Eliminar
           </button>
         </div>

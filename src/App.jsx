@@ -4,9 +4,10 @@ import MovieList from './components/MovieList';
 import MovieFilters from './components/MovieFilters';
 import AddMovieForm from './components/AddMovieForm';
 import MovieForm from './components/MovieForm';
-import MovieModal from './components/MovieModal'; // Importamos el nuevo componente
+import MovieModal from './components/MovieModal';
 
 const API_URL = 'https://movie.azurewebsites.net/api/cartelera';
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY; // <-- ¡Aquí es donde la lees!
 
 function App() {
   const [allMovies, setAllMovies] = useState([]);
@@ -16,10 +17,9 @@ function App() {
   const [currentView, setCurrentView] = useState('list');
   const [editingMovie, setEditingMovie] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
-  // Nuevos estados para el modal
   const [showModal, setShowModal] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const [trailerUrl, setTrailerUrl] = useState('');
 
   const [searchParams] = useSearchParams();
 
@@ -145,15 +145,50 @@ function App() {
     setIsSidebarOpen(!isSidebarOpen);
   };
   
-  // Nuevas funciones para el modal
-  const handleOpenModal = (movie) => {
+  const fetchTrailer = async (title, year) => {
+    if (!TMDB_API_KEY) {
+      setError('Clave de API de TMDb no configurada.');
+      return '';
+    }
+
+    try {
+      const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(title)}&year=${year}&language=es-ES`;
+      const searchResponse = await fetch(searchUrl);
+      const searchData = await searchResponse.json();
+
+      const movieId = searchData.results?.[0]?.id;
+      if (!movieId) {
+        return '';
+      }
+
+      const videosUrl = `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=${TMDB_API_KEY}&language=es-ES`;
+      const videosResponse = await fetch(videosUrl);
+      const videosData = await videosResponse.json();
+
+      const trailer = videosData.results?.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+      return trailer ? `https://www.youtube.com/embed/${trailer.key}` : '';
+
+    } catch (err) {
+      console.error('Error fetching trailer:', err);
+      return '';
+    }
+  };
+
+  const handleOpenModal = async (movie) => {
     setSelectedMovie(movie);
     setShowModal(true);
+    setTrailerUrl('');
+    
+    if (movie.Title && movie.Year) {
+        const trailer = await fetchTrailer(movie.Title, movie.Year);
+        setTrailerUrl(trailer);
+    }
   };
 
   const handleCloseModal = () => {
     setSelectedMovie(null);
     setShowModal(false);
+    setTrailerUrl('');
   };
 
   return (
@@ -241,7 +276,7 @@ function App() {
             )}
             
             {showModal && (
-                <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
+                <MovieModal movie={selectedMovie} onClose={handleCloseModal} trailerUrl={trailerUrl} />
             )}
           </>
         )}
